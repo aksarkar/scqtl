@@ -30,9 +30,9 @@ def zinb_llik(x, mean, inv_disp, logodds):
 
   """
   # Important identities:
-  # log(x + y) = log(x) + softplus(y - x)
+  # log(x + y) = log(x) + softplus(log(y) - log(x))
   # log(sigmoid(x)) = -softplus(-x)
-  case_zero = -tf.nn.softplus(-logodds) + tf.nn.softplus(nb_llik(x, mean, inv_disp) + tf.nn.softplus(-logodds))
+  case_zero = -tf.nn.softplus(-logodds) + tf.nn.softplus(nb_llik(x, mean, inv_disp) - logodds)
   case_non_zero = -tf.nn.softplus(logodds) + nb_llik(x, mean, inv_disp)
   return tf.where(tf.less(x, 1), case_zero, case_non_zero)
 
@@ -80,7 +80,7 @@ def fit(umi, onehot, size_factor, design=None, learning_rate=1e-2,
     else:
       mean = tf.exp(tf.Variable(tf.zeros([m, p])))
       inv_disp = tf.exp(tf.Variable(tf.zeros([m, p])))
-      logodds = tf.Variable(tf.zeros([m, p]))
+      logodds = tf.Variable(tf.constant(-8.0, shape=[m, p]))
 
     lam = size_factor * tf.matmul(onehot, mean)
     if design is not None:
@@ -92,7 +92,7 @@ def fit(umi, onehot, size_factor, design=None, learning_rate=1e-2,
     train_nb = tf.train.RMSPropOptimizer(learning_rate=learning_rate).minimize(nb_nll)
     train_zinb = tf.train.RMSPropOptimizer(learning_rate=learning_rate).minimize(zinb_nll)
 
-    opt = [tf.log(mean), -tf.log(inv_disp), logodds]
+    opt = [tf.log(mean), -tf.log(inv_disp), logodds, nb_nll, zinb_nll]
     if return_beta:
       opt.append(beta)
 
@@ -100,7 +100,7 @@ def fit(umi, onehot, size_factor, design=None, learning_rate=1e-2,
     with tf.Session() as sess:
       sess.run(tf.global_variables_initializer())
       for i in range(max_epochs):
-        if i < max_epochs // 2 and warm_start is None:
+        if warm_start is None:
           _, update = sess.run([train_nb, nb_nll])
         else:
           _, update = sess.run([train_zinb, zinb_nll])          
