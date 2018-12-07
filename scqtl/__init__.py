@@ -1,4 +1,7 @@
 import scqtl.diagnostic
 import scqtl.np
 import scqtl.simulation
-import scqtl.tf
+try:
+  import scqtl.tf
+except ImportError:
+  pass
