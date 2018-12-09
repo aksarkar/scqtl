@@ -1,0 +1,59 @@
+* Single cell QTL mapping
+
+This package implements maximum likelihood estimation of the zero-inflated
+negative binomial model described in:
+
+Abhishek K Sarkar, Po-Yuan Tung, John D. Blischak, Jonathan E. Burnett, Yang
+I. Li, Matthew Stephens, Yoav Gilad. "Discovery and characterization of
+variance QTLs in human induced pluripotent stem cells". bioRxiv 424192; doi:
+https://doi.org/10.1101/424192
+
+** Installation
+
+   #+BEGIN_SRC sh
+     pip install git+https://www.github.com/aksarkar/scqtl.git#egg=scqtl
+   #+END_SRC
+
+** Example
+
+   #+BEGIN_SRC ipython
+     import numpy as np
+     import scqtl
+
+     # Generate some ZINB-distributed counts
+     num_samples = 1000
+     umi = np.concatenate([scqtl.simulation.simulate(
+       num_samples=num_samples,
+       size=1e5,
+       seed=trial)[0][:,:1] for trial in range(10)], axis=1)
+     size_factor = 1e5 * np.ones((num_samples, 1)))
+
+     # Generate a null design matrix
+     design = np.zeros((num_samples, 1))
+
+     # Map all samples to one individual/condition, i.e. one set of ZINB parameters
+     onehot = np.ones((num_samples, 1))
+
+     # Find the NB MLE
+     # Important: casting to float32 is required
+     init = scqtl.tf.fit(
+       umi=umi.astype(np.float32),
+       onehot=onehot.astype(np.float32),
+       design=design.astype(np.float32),
+       size_factor=size_factor.astype(np.float32),
+       learning_rate=1e-3,
+       max_epochs=20000,
+       verbose=True,
+     )
+
+     # Find the ZINB MLE, starting from the NB MLE
+     log_mu, log_phi, logodds, nb_llik, zinb_llik = scqtl.tf.fit(
+       umi=umi.astype(np.float32),
+       onehot=onehot.astype(np.float32),
+       design=design.astype(np.float32),
+       size_factor=size_factor.astype(np.float32),
+       learning_rate=1e-3,
+       max_epochs=20000,
+       warm_start=init[:3],
+       verbose=True)
+   #+END_SRC
