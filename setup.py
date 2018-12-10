@@ -10,7 +10,6 @@ setuptools.setup(
     license='MIT',
     install_requires=[
         'numpy',
-        'pandas',
         'scipy',
         'tensorflow',
     ],
