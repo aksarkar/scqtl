@@ -2,7 +2,7 @@ import numpy as np
 import scipy.special as sp
 import scipy.stats as st
 
-def rpp(x, log_mu, log_phi, logodds, size, onehot, n_samples=100):
+def rpp(x, log_mu, log_phi, logodds, size, onehot, n_samples=1):
   # Important: these are n x 1
   n = onehot.dot(np.exp(-log_phi))
   pi0 = onehot.dot(sp.expit(-logodds))
@@ -20,6 +20,6 @@ def rpp(x, log_mu, log_phi, logodds, size, onehot, n_samples=100):
   rpp = cdf.ravel() + u * pmf.ravel()
   return rpp
 
-def diagnostic_test(x, log_mu, log_phi, logodds, size, onehot, n_samples=100):
+def diagnostic_test(x, log_mu, log_phi, logodds, size, onehot, n_samples=1):
   vals = rpp(x, log_mu, log_phi, logodds, size, onehot, n_samples)
   return st.kstest(vals.ravel(), 'uniform')
