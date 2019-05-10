@@ -23,9 +23,9 @@ per individual/condition per gene, and then perform all downstream analysis on
    The package has been tested with:
 
    #+BEGIN_EXAMPLE
-   numpy==1.14.3
-   scipy==1.0.0
-   tensorflow==1.3.0
+     numpy==1.14.3
+     scipy==1.0.0
+     tensorflow==1.3.0
    #+END_EXAMPLE
 
    In the analysis pipeline for the paper, we used [[https://github.com/jdblischak/singlecell-qtl/blob/master/environment-frozen.yaml][a common Conda environment
