@@ -5,8 +5,8 @@ negative binomial model described in:
 
 Abhishek K Sarkar, Po-Yuan Tung, John D. Blischak, Jonathan E. Burnett, Yang
 I. Li, Matthew Stephens, Yoav Gilad. "Discovery and characterization of
-variance QTLs in human induced pluripotent stem cells". bioRxiv 424192; doi:
-https://doi.org/10.1101/424192
+variance QTLs in human induced pluripotent stem cells". /PLoS Genetics/ (2019).
+https://doi.org/10.1371/journal.pgen.1008045
 
 The key idea is that we learn latent point-Gamma distributions for expression
 per individual/condition per gene, and then perform all downstream analysis on
