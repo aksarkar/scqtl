@@ -43,7 +43,7 @@ per individual/condition per gene, and then perform all downstream analysis on
        num_samples=num_samples,
        size=1e5,
        seed=trial)[0][:,:1] for trial in range(10)], axis=1)
-     size_factor = 1e5 * np.ones((num_samples, 1)))
+     size_factor = 1e5 * np.ones((num_samples, 1))
 
      # Generate a null design matrix
      design = np.zeros((num_samples, 1))
